@@ -41,7 +41,8 @@ public class Pathfinding : MonoBehaviour
             Debug.LogError("Start or End point is out of bounds of grid. Please choose inbound value.");
             return;
         }
-
+        this.transform.position = new Vector3(gridDimensions.x / 2, this.transform.position.y, gridDimensions.y / 2);
+        this.GetComponent<Camera>().orthographicSize = gridDimensions.x / 2 + 1;
         int attempts = 0;
         do
         {
@@ -58,6 +59,16 @@ public class Pathfinding : MonoBehaviour
         Debug.Log("Number of attempts: " + attempts);
        
 
+    }
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            var point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2Int gridPoint = new Vector2Int(Mathf.RoundToInt(point.x), Mathf.RoundToInt(point.z));
+            AddObstacle(gridPoint);
+            FindPath(start, goal);
+        }
     }
 
     public void GenerateRandomGrid(int width, int height, float obstacleProbability)
