@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Net;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Pathfinding : MonoBehaviour
@@ -66,8 +67,8 @@ public class Pathfinding : MonoBehaviour
         {
             var point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2Int gridPoint = new Vector2Int(Mathf.RoundToInt(point.x), Mathf.RoundToInt(point.z));
+            
             AddObstacle(gridPoint);
-            FindPath(start, goal);
         }
     }
 
@@ -89,12 +90,6 @@ public class Pathfinding : MonoBehaviour
                 if(rollingProbability >= Random.Range(0f, 1f))
                 {
                     AddObstacle(nextPosition);
-                    //if (!FindPath(start, goal))
-                    //{
-                    //    grid[y, x] = 0;
-                    //    rollingProbability += .01f;
-                    //    continue;
-                    //}
                     rollingProbability = obstacleProbability;
                 }
                 else
@@ -111,6 +106,16 @@ public class Pathfinding : MonoBehaviour
     {
         //Add an obstacble at the position in the grid
         grid[position.y, position.x] = 1;
+       
+        
+        // Populate oldList...
+
+        var oldPath = path.GetRange(0, path.Count);
+        if (!FindPath(start, goal))
+        {
+            grid[position.y, position.x] = 0;
+            path = oldPath.GetRange(0, oldPath.Count);
+        }
     }
 
     private void OnDrawGizmos()
@@ -153,6 +158,10 @@ public class Pathfinding : MonoBehaviour
 
     private bool FindPath(Vector2Int start, Vector2Int goal)
     {
+        if (DoesPathWork())
+        {
+            return true;
+        }
         path.Clear();
         Queue<Vector2Int> frontier = new Queue<Vector2Int>();
         frontier.Enqueue(start);
@@ -197,5 +206,22 @@ public class Pathfinding : MonoBehaviour
         path.Add(start);
         path.Reverse();
         return true;
+    }
+
+    bool DoesPathWork() 
+    { 
+        if (path.Count == 0)
+        {
+            return false;
+        }
+        foreach(var point in path)
+        {
+            if (grid[point.y, point.x] == 1)
+            {
+                return false;
+            }
+        }
+        return true;
+        
     }
 }

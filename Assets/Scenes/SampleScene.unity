@@ -324,7 +324,7 @@ MonoBehaviour:
   start: {x: 0, y: 1}
   goal: {x: 19, y: 14}
   gridDimensions: {x: 40, y: 40}
-  obstacleProbability: 0.1
+  obstacleProbability: 0.3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
